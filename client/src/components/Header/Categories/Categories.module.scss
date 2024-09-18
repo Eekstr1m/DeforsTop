@@ -1,0 +1,54 @@
+@import "../../../index.scss";
+
+// Categories
+.categories {
+  display: flex;
+  gap: 15px;
+}
+@media (max-width: 767px) {
+  .categories_title {
+    display: none;
+  }
+}
+// .modal {
+//   z-index: 100000000;
+//   margin-top: 50px;
+//   width: 100vw;
+//   //   background-color: #ccc;
+// }
+.modalDialog {
+  width: 100vw;
+  max-width: 70%;
+}
+@media (min-width: 1700px) {
+  .modalDialog {
+    max-width: 1200px;
+  }
+}
+@media (max-width: 1200px) {
+  .modalDialog {
+    max-width: 100%;
+  }
+}
+@media (max-width: 600px) {
+  .modalDialog {
+    margin-top: 110px;
+    margin-left: 0;
+  }
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100000000;
+}
+.category_item {
+  width: fit-content;
+  padding: 5px 5px;
+  transition: all 0.2s linear;
+
+  &:hover {
+    background-color: $light_yellow;
+  }
+}

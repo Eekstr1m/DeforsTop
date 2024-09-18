@@ -1,0 +1,30 @@
+.wrapper {
+  max-width: var(--max_width);
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+@media (max-width: 1200px) {
+  .wrapper {
+    max-width: 100%;
+  }
+}
+
+.spec {
+  display: grid;
+  gap: 20px;
+  font-size: 18px;
+
+  .item:nth-child(odd) {
+    background: var(--light_gray);
+    padding: 15px 10px;
+  }
+}
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+  gap: 20px;
+}
+.desc {
+  text-align: right;
+}

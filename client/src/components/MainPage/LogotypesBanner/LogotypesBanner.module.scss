@@ -1,0 +1,22 @@
+.wrapper {
+  max-width: var(--max_width);
+  margin: 0 auto;
+}
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-gap: 1rem;
+}
+.logo_item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  *img {
+    width: 150px;
+    height: 85px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+}

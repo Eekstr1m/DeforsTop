@@ -1,0 +1,6 @@
+.like_icon {
+  transition: all 0.2s linear;
+  &:hover {
+    color: var(--yellow);
+  }
+}

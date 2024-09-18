@@ -1,0 +1,15 @@
+.btn {
+  width: fit-content;
+  background-color: var(--yellow);
+  border-radius: 15px;
+  color: var(--black);
+  font-weight: bold;
+  padding: 10px 25px;
+  transition: all 0.2s linear;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    background-color: var(--light_yellow);
+  }
+}

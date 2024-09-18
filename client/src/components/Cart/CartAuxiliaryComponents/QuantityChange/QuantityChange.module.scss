@@ -1,0 +1,33 @@
+.wrapper {
+  display: flex;
+  //   align-items: center;
+  //   text-align: center;
+  //   gap: 10px;
+}
+.icons {
+  border: 1px solid var(--light_gray);
+  padding: 5px 10px;
+  cursor: pointer;
+  user-select: none;
+
+  outline: none;
+  background-color: transparent;
+
+  &:disabled {
+    background-color: #efefef;
+  }
+}
+.icon_minus {
+  border-radius: 15px 0 0 15px;
+}
+.icon_plus {
+  border-radius: 0 15px 15px 0;
+}
+.number {
+  border-top: 1px solid var(--light_gray);
+  border-bottom: 1px solid var(--light_gray);
+  padding: 5px 10px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+}

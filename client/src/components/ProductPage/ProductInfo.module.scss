@@ -1,0 +1,30 @@
+.wrapper {
+  padding-top: 100px;
+  // max-width: var(--max_width);
+  margin: 0 auto;
+}
+
+// Photo Block
+.photos {
+  max-width: var(--max_width);
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+.carouselWrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+@media (max-width: 1200px) {
+  .photos {
+    max-width: 100vw;
+  }
+  .wrapper {
+    // padding-top: 100px;
+    padding: 100px 15px 0 15px;
+  }
+}
+@media (max-width: 600px) {
+  .wrapper {
+    padding-top: 170px;
+  }
+}

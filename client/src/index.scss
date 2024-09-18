@@ -1,0 +1,27 @@
+// SCSS var colors
+$light_yellow: #ffe99d;
+
+html,
+body {
+  margin: 0;
+  font-family: "Mulish", sans-serif;
+}
+#root {
+  /* width: clamp(300px, calc(100vw - 30px), 1600px); */
+  margin: 0 auto;
+  overflow-x: hidden;
+  --max_width: clamp(300px, 70%, 1200px);
+
+  /* colors */
+  --white: white;
+  --black: #041013;
+  --yellow: #ffdb5b;
+
+  --gray: #363f42;
+  --light_gray: #cdcfd0;
+  --light_yellow: #ffe99d;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}

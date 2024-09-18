@@ -1,0 +1,26 @@
+.wrapper {
+  display: flex;
+}
+.bg_image {
+  width: 100vw;
+  height: 100vh;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("../../../assets/mainbg.png");
+
+  align-content: center;
+}
+.content {
+  color: var(--white);
+  margin: 0 auto;
+  max-width: var(--max_width);
+
+  align-content: center;
+}
+.title {
+  font-size: calc(36px + (70 - 40) * ((100vw - 320px) / (1920 - 320)));
+  font-weight: 800;
+  width: clamp(200px, 90%, 380px);
+}

@@ -1,0 +1,32 @@
+.wrapper {
+  margin: 0 auto;
+  padding: 50px 0;
+}
+.title {
+  padding-bottom: 20px;
+}
+.products {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0 auto;
+}
+@media (min-width: 1024px) and (max-width: 1919px) {
+  .products {
+    max-width: var(--max_width);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    place-items: center;
+  }
+  .title {
+    max-width: 100%;
+    margin: 0;
+  }
+}
+@media (min-width: 1200px) {
+  .title {
+    max-width: var(--max_width);
+    margin: 0 auto;
+  }
+}
