@@ -4,6 +4,7 @@ import {
   CreateProductModel,
   Product,
   ProductViewModel,
+  UpdateProductModel,
 } from "../models/ProductModel.js";
 
 type ProductsViewQuery = {
@@ -152,6 +153,43 @@ export const productsRepo = {
     });
 
     return await newProduct.save();
+  },
+  async updateProduct({
+    id,
+    title,
+    description,
+    price,
+    quantity,
+    brand,
+    category,
+    thumbnailPath,
+    specifications,
+  }: UpdateProductModel) {
+    if (!id) {
+      return 400;
+    }
+    const product = await Product.findOneAndUpdate(
+      { _id: { $eq: id } },
+      {
+        $set: {
+          title,
+          description,
+          price,
+          quantity,
+          brand,
+          category,
+          thumbnailPath,
+          specifications,
+        },
+      },
+      { returnOriginal: false }
+    );
+
+    if (!product) {
+      return 400;
+    }
+
+    return product;
   },
   async getNewArrivalsProducts() {
     const products: ProductViewModel[] = await Product.find({

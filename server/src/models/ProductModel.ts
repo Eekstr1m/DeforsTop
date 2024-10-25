@@ -87,6 +87,8 @@ export type CreateProductModel = {
   specifications: Array<SpecificationsObject>;
 };
 
+export type UpdateProductModel = CreateProductModel & { id: string };
+
 export type AllProductsViewModel = {
   products: ProductViewModel[];
   total: number;

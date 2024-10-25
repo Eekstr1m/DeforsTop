@@ -12,6 +12,7 @@ import {
 import {
   RequestWithBody,
   RequestWithParams,
+  RequestWithParamsAndBody,
   RequestWithQuery,
   ResponseError,
   getTypedError,
@@ -154,6 +155,66 @@ export const getProductsRouter = () => {
         });
 
         res.status(201).json(product);
+      } catch (err) {
+        res.status(500).json({ message: getTypedError(err) });
+      }
+    }
+  );
+
+  router.put(
+    "/:id",
+    upload.single("thumbnail"),
+    verifyToken,
+    [
+      param("id").trim().notEmpty().isString(),
+      body("title").trim().optional(),
+      body("description").trim().optional(),
+      body("price").trim().optional().isNumeric(),
+      body("quantity").trim().optional().isNumeric(),
+      body("brand").trim().optional(),
+      body("category").trim().optional(),
+      body("thumbnailPath").trim().optional(),
+      body("specifications").optional().isArray().contains({}),
+      body("specifications.*.name").exists().notEmpty().isString(),
+      body("specifications.*.desc").exists().notEmpty().isString(),
+    ],
+    inputValidationMiddleware,
+    async (
+      req: RequestWithParamsAndBody<GetProductParamsModel, CreateProductModel>,
+      res: Response<ProductViewModel | ResponseError>
+    ) => {
+      try {
+        // Update product and send back to the client
+
+        const { id } = req.params;
+        const {
+          title,
+          description,
+          price,
+          quantity,
+          brand,
+          category,
+          thumbnailPath,
+          specifications,
+        } = req.body;
+
+        const product = await productsRepo.updateProduct({
+          id,
+          title,
+          description,
+          price,
+          quantity,
+          brand,
+          category,
+          thumbnailPath,
+          specifications,
+        });
+
+        if (product === 400) {
+          return res.status(400).json({ message: "Invalid credentials" });
+        }
+
+        res.status(200).json(product);
       } catch (err) {
         res.status(500).json({ message: getTypedError(err) });
       }
