@@ -23,7 +23,7 @@ export default function AddToCart({
   const cartDataState = useSelector((state: RootState) => state.cart);
 
   const { data: cartData, isLoading } = useSWR<ResponseCartI>(
-    `/cart/${authUserData.userData._id}`,
+    `/cart/${authUserData._id}`,
     apiGetFetcher
   );
 
@@ -40,11 +40,11 @@ export default function AddToCart({
   );
 
   const addToCartHandler = async () => {
-    if (!authUserData.userData) {
+    if (!authUserData) {
       return <Navigate to={`/login`} />;
     }
     const response = await API.updateCart(
-      authUserData.userData._id,
+      authUserData._id,
       item._id,
       quantity || 1
     );

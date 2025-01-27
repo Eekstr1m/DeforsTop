@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 // import Error from "../components/Error/Error";
 import Cart from "./Cart";
 import Category from "./Category";
@@ -7,6 +7,12 @@ import Login from "./Login";
 import Main from "./Main";
 import Product from "./Product";
 import Wishlist from "./Wishlist";
+import Profile from "./Profile";
+import Admin from "./Admin";
+import AdminDashboard from "../components/AdminPage/AdminDashboard/AdminDashboard";
+import AdminProducts from "../components/AdminPage/AdminProducts/AdminProducts";
+import AdminAddProduct from "../components/AdminPage/AdminProducts/AdminAddProduct/AdminAddProduct";
+import AdminProductsList from "../components/AdminPage/AdminProducts/AdminProductsList/AdminProductsList";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +49,44 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/admin",
+    element: <Admin />,
+    children: [
+      {
+        index: true,
+        element: <Navigate replace to="dashboard" />,
+      },
+      {
+        path: "dashboard",
+        element: <AdminDashboard />,
+      },
+      {
+        path: "products",
+        element: <AdminProducts />,
+        children: [
+          {
+            index: true,
+            element: <Navigate replace to="productslist" />,
+          },
+          {
+            path: "addproduct",
+            element: <AdminAddProduct />,
+          },
+          {
+            path: "productslist",
+            element: <AdminProductsList />,
+          },
+        ],
+      },
+    ],
     errorElement: <Error />,
   },
   {

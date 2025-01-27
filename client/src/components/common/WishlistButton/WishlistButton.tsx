@@ -25,7 +25,7 @@ export default function WishlistButton() {
 export function AddToWishlistButton({ item }: { item: ProductI }) {
   const { authUserData } = useAuthData();
   const { data, error, isLoading } = useSWR<ResponseWishlistI>(
-    `/wishlist/${authUserData.userData._id}/${item._id}`,
+    `/wishlist/${authUserData._id}/${item._id}`,
     apiGetWishlistProduct
   );
 
@@ -61,10 +61,7 @@ function WishlistBtn({
 
   // add to wishlist and redux
   const addToWishlistHandler = async () => {
-    const response = await API.addToWishlist(
-      authUserData.userData._id,
-      item._id
-    );
+    const response = await API.addToWishlist(authUserData._id, item._id);
     if (response.status === 200 || response.status === 201) {
       setIsLiked(true);
       dispatch(addToWishList(response.data.products));
@@ -72,10 +69,7 @@ function WishlistBtn({
   };
   // remove from wishlist and redux
   const removeFromWishlistHandler = async () => {
-    const response = await API.removeFromWishlist(
-      authUserData.userData._id,
-      item._id
-    );
+    const response = await API.removeFromWishlist(authUserData._id, item._id);
     if (response.status === 200) {
       setIsLiked(false);
       dispatch(removeFromWishList(response.data.products));

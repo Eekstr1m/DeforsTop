@@ -8,6 +8,8 @@
   border-radius: 15px;
   overflow: hidden;
 
+  position: relative;
+
   transition: all 0.2s linear;
 
   &:hover {
@@ -45,4 +47,21 @@
   i {
     padding-right: 10px;
   }
+}
+
+.card_runningOut {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--red);
+  border-radius: 15px;
+  color: var(--white);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0 10px;
+  z-index: 2;
+}
+
+.card_outStock {
+  background-color: var(--gray);
 }

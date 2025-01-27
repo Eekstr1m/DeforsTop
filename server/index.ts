@@ -17,6 +17,8 @@ import session from "express-session";
 import { getLogoRouter } from "./src/routes/logo.js";
 import { getWishlistRouter } from "./src/routes/wishlist.js";
 import { getSearchRouter } from "./src/routes/search.js";
+import multer from "multer";
+import fs from "fs";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -60,9 +62,28 @@ mongoose
 
 /* ROUTES */
 app.use(authTokenVerification);
-// app.get("/test", sessionToken, (req, res) => {
-//   res.json("Hello world");
-// });
+
+// upload files
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      const path = `uploads/${req.body.title}`;
+      // const path = `public/assets/${req.body.title}`;
+      fs.mkdirSync(path, { recursive: true });
+
+      cb(null, path);
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  }),
+});
+
+app.post("/test", upload.array("avatar"), (req, res) => {
+  // console.log(req.files["title"]);
+  console.log("tyt", req.files[0].destination);
+  res.json("Upload");
+});
 
 app.use("/auth", getAuthRouter());
 app.use("/products", getProductsRouter());

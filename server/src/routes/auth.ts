@@ -3,8 +3,10 @@ import express, { Express, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import {
   AuthUser,
+  AuthUserI,
   AuthUserTokenModel,
   AuthUserViewModel,
+  GuestUserI,
 } from "../models/AuthUserModel.js";
 import {
   RequestWithBody,
@@ -23,9 +25,14 @@ export const getAuthRouter = () => {
       res: Response<AuthUserViewModel | ResponseError>
     ) => {
       try {
-        const { firstName, lastName, email, password } = req.body;
-        if (!firstName || !lastName || !email || !password) {
+        const { firstName, lastName, email, password, phone, birth } = req.body;
+        if (!firstName || !email || !password) {
           return res.status(400).json({ message: "Invalid credentials" });
+        }
+
+        let birthDate = birth;
+        if (birth) {
+          birthDate = new Date(birth);
         }
 
         const salt = await bcrypt.genSalt();
@@ -35,6 +42,9 @@ export const getAuthRouter = () => {
           firstName,
           lastName,
           email,
+          phone,
+          role: "user",
+          birth: birthDate,
           password: passwordHash,
         });
 
@@ -73,6 +83,7 @@ export const getAuthRouter = () => {
         if (!isMatch)
           return res.status(400).json({ message: "Invalid credentials" });
 
+        // add Admin Token
         if (process.env.JWT_SECRET) {
           const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
@@ -94,6 +105,22 @@ export const getAuthRouter = () => {
   router.delete("/login", async (req, res) => {
     try {
       res.cookie("AuthToken", "", { maxAge: -1, httpOnly: true });
+
+      const sessionToken: string | undefined = req.cookies.SessionToken;
+      if (sessionToken) {
+        const decodedToken = jwt.decode(sessionToken) as MyToken;
+
+        if (!decodedToken) {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+
+        const ResponseAuthUser = {
+          _id: decodedToken.id,
+          status: "guest",
+        };
+        return res.status(200).json(ResponseAuthUser);
+      }
+
       res.sendStatus(204);
     } catch (err) {
       res.status(500).json({ message: getTypedError(err) });
@@ -107,7 +134,7 @@ export const getAuthRouter = () => {
       const authToken: string | undefined = req.cookies.AuthToken;
       const sessionToken: string | undefined = req.cookies.SessionToken;
 
-      let ResponseAuthUser;
+      let ResponseAuthUser: AuthUserI | GuestUserI;
 
       if (authToken) {
         const decodedToken = jwt.decode(authToken) as MyToken;
@@ -127,9 +154,14 @@ export const getAuthRouter = () => {
           _id: user._id,
           status: "login",
           firstName: user.firstName,
-          lastName: user.lastName,
+          lastName: user.lastName || "",
           email: user.email,
+          phone: user.phone || "",
+          birth: user.birth || "",
+          role: user.role,
         };
+
+        return res.status(200).json(ResponseAuthUser);
       } else if (sessionToken) {
         const decodedToken = jwt.decode(sessionToken) as MyToken;
 
@@ -141,9 +173,10 @@ export const getAuthRouter = () => {
           _id: decodedToken.id,
           status: "guest",
         };
+        return res.status(200).json(ResponseAuthUser);
       }
 
-      res.status(200).json(ResponseAuthUser);
+      // res.status(200).json(ResponseAuthUser);
     } catch (err) {
       res.status(500).json({ message: getTypedError(err) });
     }

@@ -50,7 +50,7 @@ export default function Category() {
     <>
       <Header />
       {/* <Categories /> */}
-      <ProductsList productsData={data.data} />
+      {isLoading ? <Preloader /> : <ProductsList productsData={data.data} />}
       <Footer />
     </>
   );

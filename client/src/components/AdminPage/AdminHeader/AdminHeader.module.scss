@@ -1,0 +1,36 @@
+.header {
+  width: 100vw;
+  //   position: fixed;
+  background-color: var(--white);
+  box-shadow: 0px 10px 15px 5px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  margin-bottom: 50px;
+}
+.wrapper {
+  height: 60px;
+  //   max-width: var(--max_width);
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 0 10px;
+}
+// Logo
+.logo_block {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.logo {
+  img {
+    width: 50px;
+  }
+}
+.logo_title {
+  // font-size: 30px;
+  font-size: calc(20px + (30 - 20) * ((100vw - 320px) / (1920 - 320)));
+  font-weight: 600;
+}

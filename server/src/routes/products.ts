@@ -64,7 +64,7 @@ export const getProductsRouter = () => {
     "/",
     [
       query("page").trim().isNumeric().optional(),
-      query("count").optional().isNumeric().optional(),
+      query("count").optional().isNumeric().optional().isInt({ max: 100 }),
       query("minPrice").trim().isNumeric().optional(),
       query("maxPrice").trim().isNumeric().optional(),
       query("sortedValue")
@@ -116,10 +116,10 @@ export const getProductsRouter = () => {
       body("title").trim().notEmpty(),
       body("description").trim().notEmpty(),
       body("price").trim().notEmpty().isNumeric(),
-      body("quantity").trim().notEmpty().isNumeric().isInt({ min: 1 }),
+      body("quantity").trim().notEmpty().isNumeric().isInt({ min: 0 }),
       body("brand").trim().notEmpty(),
       body("category").trim().notEmpty(),
-      body("thumbnailPath").trim().notEmpty(),
+      body("thumbnailPath").trim(),
       body("specifications").optional().isArray().contains({}),
       body("specifications.*.name").exists().notEmpty().isString(),
       body("specifications.*.desc").exists().notEmpty().isString(),

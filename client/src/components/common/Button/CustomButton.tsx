@@ -38,6 +38,34 @@ export function CustomButtonStyle({
   );
 }
 
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: string;
+}
+
+export const CustomBtn: React.FC<ButtonProps> = ({ children, ...props }) => {
+  return (
+    <button type="submit" className={s.btn} {...props}>
+      {children}
+    </button>
+  );
+};
+
+// export function CustomBtn({
+//   children,
+//   style,
+//   type,
+// }: {
+//   children: JSX.Element;
+//   style?: React.CSSProperties;
+//   type: React.ButtonHTMLAttributes<HTMLButtonElement>;
+// }) {
+//   return (
+//     <button className={s.btn} type={type} style={style}>
+//       {children}
+//     </button>
+//   );
+// }
+
 export function CategoryButton({
   children,
   onClick,

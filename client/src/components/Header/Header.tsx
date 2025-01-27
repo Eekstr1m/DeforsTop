@@ -30,10 +30,10 @@ export default function Header() {
           <Link className={s.icon} to={"/cart"}>
             <i className="fa-solid fa-basket-shopping fa-lg"></i>
           </Link>
-          {authUserData.authStatus === "login" ? (
-            <div className={s.icon}>
+          {authUserData.status === "login" ? (
+            <Link className={s.icon} to={"/profile"}>
               <i className="fa-solid fa-user fa-lg"></i>
-            </div>
+            </Link>
           ) : (
             <Link className={s.icon} to={"/login"}>
               <i className="fa-solid fa-user fa-lg"></i>

@@ -26,6 +26,9 @@
   flex-direction: column;
   gap: 20px;
 }
+.filters_modal {
+  display: none;
+}
 @media (max-width: 913px) {
   .wrapper {
     grid-template-columns: 1fr;
@@ -34,4 +37,24 @@
     padding-top: 20px;
     justify-content: center;
   }
+  .filters {
+    flex-direction: row;
+    align-items: center;
+  }
+  .filters_inHamburger {
+    display: none;
+  }
+  .filters_modal {
+    display: block;
+  }
+}
+.filter_modal {
+  width: 100vw;
+  max-width: 80%;
+  margin-left: 0;
+  margin-top: 0;
+  z-index: 2000;
+}
+.filter_modal_content {
+  min-height: 100vh;
 }

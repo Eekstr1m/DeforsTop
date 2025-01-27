@@ -28,19 +28,25 @@ const productsFinderFunc = async (
 
   if (findObj !== null) {
     if (sorted === 0) {
-      productsArr = await Product.find(findObj).limit(count).skip(skip);
+      productsArr = await Product.find(findObj)
+        .sort({ stockAvailability: -1, updatedAt: -1 })
+        .limit(count)
+        .skip(skip);
     } else {
       productsArr = await Product.find(findObj)
-        .sort({ price: sorted })
+        .sort({ stockAvailability: -1, price: sorted })
         .limit(count)
         .skip(skip);
     }
   } else {
     if (sorted === 0) {
-      productsArr = await Product.find().limit(count).skip(skip);
+      productsArr = await Product.find()
+        .sort({ stockAvailability: -1, updatedAt: -1 })
+        .limit(count)
+        .skip(skip);
     } else {
       productsArr = await Product.find()
-        .sort({ price: sorted })
+        .sort({ stockAvailability: -1, price: sorted })
         .limit(count)
         .skip(skip);
     }
@@ -66,6 +72,12 @@ export const productsRepo = {
     brand,
     category,
   }: ProductsViewQuery) {
+    const testSort = await Product.find().sort({
+      stockAvailability: -1,
+      updatedAt: -1,
+    });
+    // console.log("testSort", testSort);
+
     let products: ProductViewModel[];
 
     const priceFinder =
@@ -150,6 +162,7 @@ export const productsRepo = {
       category,
       thumbnail: thumbnailPath,
       specifications,
+      stockAvailability: +quantity === 0 ? false : true,
     });
 
     return await newProduct.save();
@@ -180,6 +193,7 @@ export const productsRepo = {
           category,
           thumbnailPath,
           specifications,
+          stockAvailability: +quantity === 0 ? false : true,
         },
       },
       { returnOriginal: false }

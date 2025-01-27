@@ -1,7 +1,9 @@
 .form {
   display: grid;
   place-items: center;
-  margin: 200px 0;
+  // margin: 100px 0;
+
+  margin-top: 150px;
 }
 
 .form_error {
@@ -9,9 +11,8 @@
   padding: 10px 0;
   text-align: center;
   margin-bottom: 15px;
-  color: #d3371d;
-  background-color: #ebc8c4;
-  border: 1px solid #d3371d;
+  color: var(--red);
+  border: 1px solid var(--red);
 }
 
 .text_input_area {
@@ -22,27 +23,20 @@
   flex-direction: column;
 
   width: 300px;
-  // height: 30px;
   padding: 10px 25px;
 
-  // border: 1px solid #333;
-  border: none;
+  border: 2px solid var(--yellow);
   border-radius: 15px;
   outline: none;
 
-  color: #fff;
-  background-color: var(--yellow);
+  color: var(--black);
 
   transition: all 0.2s linear, background-color 0.2s linear;
 
   &:focus {
-    outline: 1px solid #333;
-    color: var(--black);
-    background-color: var(--light_yellow);
-  }
-
-  &::placeholder {
-    color: rgba(#fff, 0.7);
+    outline: none;
+    border: 2px var(--light_yellow) solid;
+    transform: scale(1.05);
   }
 }
 .text_label {
@@ -81,7 +75,7 @@
 
 .error {
   display: inline-block;
-  color: red;
+  color: var(--red);
   margin-top: 5px;
 
   &:before {

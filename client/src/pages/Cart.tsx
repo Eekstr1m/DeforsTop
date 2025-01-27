@@ -13,7 +13,7 @@ export default function Cart() {
   const { authUserData } = useAuthData();
 
   const { data, error, isLoading } = useSWR<ResponseCartI>(
-    `/cart/${authUserData.userData._id}`,
+    `/cart/${authUserData._id}`,
     apiGetFetcher
   );
 

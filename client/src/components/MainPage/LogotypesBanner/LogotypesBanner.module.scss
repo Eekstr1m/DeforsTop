@@ -1,12 +1,22 @@
 .wrapper {
-  max-width: var(--max_width);
+  // max-width: var(--max_width);
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
+
+  ::-webkit-scrollbar {
+    width: 0;
+  }
 }
 .content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  grid-gap: 1rem;
+  // display: grid;
+  // grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  // grid-gap: 1rem;
+  display: flex;
+  overflow: scroll;
+  gap: 70px;
 }
+
 .logo_item {
   display: flex;
   justify-content: center;

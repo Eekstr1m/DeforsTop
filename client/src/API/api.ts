@@ -1,6 +1,10 @@
 import axios from "axios";
 import { Fetcher } from "swr";
-import { AuthUserI, ResponseAuthUserI } from "../interfaces/authUser";
+import {
+  AuthUserDataI,
+  GuestUserDataI,
+  ResponseAuthUserI,
+} from "../interfaces/authUser";
 import { ResponseCartI } from "../interfaces/cart";
 import { getTypedError } from "../interfaces/error";
 import { ResponseProductsI } from "../interfaces/productsI";
@@ -8,6 +12,7 @@ import { ResponseWishlistI } from "../interfaces/wishlist";
 import { ResponseSearchI } from "../interfaces/search";
 
 export const BaseURL = "http://localhost:4000";
+export const BaseAssetsPath = "http://localhost:4000/assets/";
 
 // move to env
 // export const BaseURL = "https://fp3snhng-4000.euw.devtunnels.ms";
@@ -32,22 +37,16 @@ export const API = {
 
     return response.data;
   },
-  async getAuthMe(): Promise<AuthUserI> {
+  async getAuthMe(): Promise<AuthUserDataI | GuestUserDataI> {
     try {
       const response = await instance.get(`/auth/me`);
 
-      const authUser: AuthUserI = {
-        authStatus: response.data.status,
-        userData: response.data,
-      };
+      const authUser: AuthUserDataI | GuestUserDataI = response.data;
 
       return authUser;
     } catch (error) {
       const err = getTypedError(error);
-      return {
-        authStatus: err.response.status,
-        userData: { _id: "", status: "" },
-      };
+      return err;
     }
   },
   async login(
@@ -71,6 +70,19 @@ export const API = {
       };
     }
   },
+  async logout() {
+    try {
+      const response = await instance.delete("/auth/login");
+
+      return { status: response.status, data: response.data };
+    } catch (error) {
+      const err = getTypedError(error);
+      return {
+        status: err.response.status,
+        data: err.response.data,
+      };
+    }
+  },
   async updateCart(
     userId: string,
     productId: string,
@@ -78,6 +90,25 @@ export const API = {
   ): Promise<ResponseCartI> {
     try {
       const response = await instance.put(`/cart/${userId}`, {
+        productId,
+        quantity,
+      });
+      return { status: response.status, data: response.data };
+    } catch (error) {
+      const err = getTypedError(error);
+      return {
+        status: err.response.status,
+        data: err.response.data,
+      };
+    }
+  },
+  async updateCartQuantity(
+    userId: string,
+    productId: string,
+    quantity: number
+  ): Promise<ResponseCartI> {
+    try {
+      const response = await instance.put(`/cart/quantity/${userId}`, {
         productId,
         quantity,
       });

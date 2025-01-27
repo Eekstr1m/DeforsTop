@@ -1,9 +1,9 @@
 import s from "./NoData.module.scss";
 
-export default function NoData({ childrenText }: { childrenText?: string }) {
+export default function NoData({ children }: { children?: React.ReactNode }) {
   return (
     <div className={s.wrapper}>
-      <div className={s.content}>{childrenText || "No data found."}</div>
+      <div className={s.content}>{children || "No data found."}</div>
     </div>
   );
 }

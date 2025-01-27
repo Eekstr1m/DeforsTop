@@ -16,12 +16,12 @@ export default function QuantityChange({
   const dispatch = useDispatch();
 
   const onClickHandler = async (type: "inc" | "dec") => {
-    if (!authUserData.userData) {
+    if (!authUserData) {
       return <Navigate to={`/login`} />;
     }
     const newQuantity = type === "inc" ? quantity + 1 : quantity - 1;
-    const response = await API.updateCart(
-      authUserData.userData._id,
+    const response = await API.updateCartQuantity(
+      authUserData._id,
       productId,
       newQuantity
     );

@@ -1,17 +1,19 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { API } from "../API/api";
 import Preloader from "../components/common/Preloader/Preloader";
-import { AuthUserI } from "../interfaces/authUser";
+import { AuthUserDataI, GuestUserDataI } from "../interfaces/authUser";
 
 interface UserContextI {
-  authUserData: AuthUserI;
-  setAuthUserData: React.Dispatch<React.SetStateAction<AuthUserI>>;
+  authUserData: AuthUserDataI | GuestUserDataI;
+  setAuthUserData: React.Dispatch<
+    React.SetStateAction<AuthUserDataI | GuestUserDataI>
+  >;
 }
 
 const initialUserState = {
   authUserData: {
-    authStatus: "guest",
-    userData: { _id: "", status: "guest" },
+    _id: "",
+    status: "guest",
   },
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAuthUserData: () => {},
@@ -26,9 +28,11 @@ export default function ContextProvider({
   children: JSX.Element;
 }) {
   const [isInitializing, setIsInitializing] = useState(true);
-  const [authUserData, setAuthUserData] = useState<AuthUserI>({
-    authStatus: "guest",
-    userData: { _id: "", status: "guest" },
+  const [authUserData, setAuthUserData] = useState<
+    AuthUserDataI | GuestUserDataI
+  >({
+    _id: "",
+    status: "guest",
   });
 
   useEffect(() => {
@@ -42,9 +46,7 @@ export default function ContextProvider({
     fetchData();
   }, []);
 
-  if (isInitializing) {
-    return <Preloader />;
-  }
+  if (isInitializing) return <Preloader />;
 
   return (
     <UserContext.Provider value={{ authUserData, setAuthUserData }}>

@@ -13,7 +13,7 @@ export default function Wishlist() {
   const { authUserData } = useAuthData();
 
   const { data, error, isLoading } = useSWR<ResponseWishlistI>(
-    `/wishlist/${authUserData.userData._id}`,
+    `/wishlist/${authUserData._id}`,
     apiGetFetcher
   );
 

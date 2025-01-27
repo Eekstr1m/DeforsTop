@@ -27,13 +27,15 @@ export default function Main() {
   }
 
   return (
-    <div>
+    <>
       <Header />
-      <MainBanner />
-      <LogotypesBanner logoData={logoData.data} />
-      <NewArrivals newArrivalsData={newArrivalsData.data} />
-      <AboutBlock />
+      <div>
+        <MainBanner />
+        <LogotypesBanner logoData={logoData.data} />
+        <NewArrivals newArrivalsData={newArrivalsData.data} />
+        <AboutBlock />
+      </div>
       <Footer />
-    </div>
+    </>
   );
 }

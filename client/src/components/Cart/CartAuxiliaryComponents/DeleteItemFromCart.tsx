@@ -18,11 +18,11 @@ export default function DeleteItemFromCart({
   const dispatch = useDispatch();
 
   const onDeleteItem = async () => {
-    if (!authUserData.userData) {
+    if (!authUserData) {
       return <Navigate to={`/login`} />;
     }
     const response = await API.deleteProductFromCart(
-      authUserData.userData._id,
+      authUserData._id,
       productId
     );
     if (response.status === 200) {

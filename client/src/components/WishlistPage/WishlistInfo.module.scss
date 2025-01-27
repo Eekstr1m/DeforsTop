@@ -1,5 +1,5 @@
 .wrapper {
-  padding-top: 100px;
+  padding-top: 150px;
   margin-bottom: 100px;
 }
 .products {
@@ -7,6 +7,9 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 14px;
+}
+.title {
+  margin-left: 5px;
 }
 
 @media (min-width: 1024px) and (max-width: 1919px) {

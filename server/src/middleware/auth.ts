@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { ResponseError } from "../types/RequestResponseTypes";
-import { Cart } from "../models/CartModel";
 import { randomUUID } from "crypto";
 
 export const verifyToken = async (

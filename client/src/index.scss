@@ -5,6 +5,7 @@ html,
 body {
   margin: 0;
   font-family: "Mulish", sans-serif;
+  // height: 100vh;
 }
 #root {
   /* width: clamp(300px, calc(100vw - 30px), 1600px); */
@@ -20,6 +21,16 @@ body {
   --gray: #363f42;
   --light_gray: #cdcfd0;
   --light_yellow: #ffe99d;
+
+  --red: #ff004f;
+
+  // make footer always bottom
+  display: flex;
+  flex-direction: column;
+  // display: grid;
+  // grid-template-rows: auto 1fr auto;
+
+  min-height: 100vh;
 }
 a {
   text-decoration: none;

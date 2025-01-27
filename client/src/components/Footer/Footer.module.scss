@@ -3,6 +3,9 @@
   margin-left: calc(-50vw + 50%);
   background-color: var(--black);
   color: var(--white);
+
+  // make footer always bottom
+  margin-top: auto;
 }
 .wrapper {
   max-width: var(--max_width);

@@ -36,6 +36,10 @@ const ProductSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    stockAvailability: {
+      type: Boolean,
+      required: true,
+    },
   },
   { timestamps: true, autoIndex: false }
 );
@@ -63,6 +67,7 @@ export type ProductViewModel = {
   category: string;
   thumbnail: string;
   specifications: Array<SpecificationsObject>;
+  stockAvailability: boolean;
   createdAt: NativeDate;
   updatedAt: NativeDate;
 };

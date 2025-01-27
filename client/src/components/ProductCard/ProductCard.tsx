@@ -11,7 +11,19 @@ export default function ProductCard({
   productData: ProductI;
 }) {
   return (
-    <div className={s.product_card}>
+    <div
+      className={s.product_card}
+      style={{ opacity: productData.quantity === 0 ? "0.5" : "1" }}
+    >
+      {productData.quantity > 0 && productData.quantity <= 10 && (
+        <div className={s.card_runningOut}>Running Out</div>
+      )}
+      {productData.quantity === 0 && (
+        <div className={`${s.card_runningOut} ${s.card_outStock}`}>
+          Out of stock
+        </div>
+      )}
+
       <Link to={`/product/${productData._id}`} className={s.card_img}>
         <Image thumbnail={productData.thumbnail} />
       </Link>
@@ -22,7 +34,7 @@ export default function ProductCard({
         <div className={s.card_price}>{productData.price} $</div>
         <div className={s.card_shop_block}>
           <AddToWishlistButton item={productData} />
-          <AddToCart item={productData} />
+          {productData.quantity > 0 && <AddToCart item={productData} />}
         </div>
       </div>
     </div>

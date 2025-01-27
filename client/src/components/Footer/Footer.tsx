@@ -1,8 +1,10 @@
 import s from "./Footer.module.scss";
 import logo from "../../assets/DeforsTopLogo.png";
 import { Link } from "react-router-dom";
+import { useAuthData } from "../../provider/provider";
 
 export default function Footer() {
+  const { authUserData } = useAuthData();
   return (
     <footer className={s.footer}>
       <div className={s.wrapper}>
@@ -23,9 +25,15 @@ export default function Footer() {
           <Link className={s.icon} to={"/cart"}>
             <div>Cart</div>
           </Link>
-          <Link className={s.icon} to={"/login"}>
-            <div>Log In</div>
-          </Link>
+          {authUserData.status === "guest" ? (
+            <Link className={s.icon} to={"/login"}>
+              <div>Log In</div>
+            </Link>
+          ) : (
+            <Link className={s.icon} to={"/profile"}>
+              <div>Profile</div>
+            </Link>
+          )}
         </div>
         <div>
           <div className={s.block_title}>Phone number:</div>

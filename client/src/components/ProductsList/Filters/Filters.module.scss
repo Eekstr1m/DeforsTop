@@ -1,6 +1,7 @@
 .price_wrapper {
   display: grid;
   gap: 20px;
+  max-width: 300px;
 }
 .price_values {
   display: flex;
@@ -16,4 +17,38 @@
 .brand_form_container {
   overflow: auto;
   position: relative;
+}
+
+// Sort Filter
+.sort_dropdown {
+  background-color: var(--yellow);
+  border: none;
+  color: var(--black);
+  font-weight: bold;
+  padding: 10px 25px;
+  border-radius: 15px;
+  font-size: 16px;
+  transition: all 0.2s linear;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    color: var(--black);
+    background-color: var(--light_yellow);
+  }
+
+  &:focus {
+    cursor: pointer;
+    transform: scale(1.1);
+    color: var(--black);
+    background-color: var(--light_yellow);
+  }
+}
+.sort_menu {
+  background-color: var(--yellow);
+  transition: all 0.2s linear;
+
+  *:hover {
+    background-color: var(--light_yellow);
+  }
 }

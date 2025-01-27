@@ -144,6 +144,50 @@ export const getCartRouter = () => {
     }
   );
 
+  router.put(
+    "/quantity/:userId",
+    async (
+      req: RequestWithParamsAndBody<{ userId: string }, PostCartBodyModel>,
+      res
+    ) => {
+      try {
+        const { userId } = req.params;
+        const { productId, quantity } = req.body;
+        if (!userId || !productId || !quantity) {
+          return res.status(400).json({ message: "Invalid credentials" });
+        }
+
+        const cart: CartViewModel | null = await Cart.findOne({
+          userId: { $eq: userId },
+        });
+        if (!cart) {
+          return res.status(404).json({ message: "Cart not found" });
+        }
+
+        const product = cart.products.find(
+          (item) => item.productId === productId
+        );
+        if (!product) {
+          return res.status(404).json({ message: "Product not found" });
+        }
+
+        product.quantity = quantity;
+        product.total = product.price * product.quantity;
+        const updateCart: CartViewModel | null = await Cart.findOneAndUpdate(
+          { userId: { $eq: userId } },
+          { $set: { products: cart.products } },
+          { returnOriginal: false }
+        );
+        if (!updateCart) {
+          return res.status(404).json({ message: "Cart not found" });
+        }
+        res.status(200).json(updateCart);
+      } catch (err) {
+        res.status(500).json({ message: getTypedError(err) });
+      }
+    }
+  );
+
   router.delete("/:userId/:productId", async (req, res) => {
     try {
       const { userId, productId } = req.params;

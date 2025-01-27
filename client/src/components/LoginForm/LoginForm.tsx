@@ -4,7 +4,8 @@ import { API } from "../../API/api";
 import { AuthUserDataI } from "../../interfaces/authUser";
 import { ResponseErrorI } from "../../interfaces/error";
 import { useAuthData } from "../../provider/provider";
-import c from "./LoginForm.module.scss";
+import s from "./LoginForm.module.scss";
+import { useState } from "react";
 
 interface InputProps {
   label: string;
@@ -14,19 +15,19 @@ const MyTextInput = (props: InputProps & FieldHookConfig<string>) => {
   const [field, meta] = useField(props);
 
   return (
-    <div className={c.text_input_area}>
-      <label htmlFor={props.id || props.name} className={c.text_label}>
+    <div className={s.text_input_area}>
+      <label htmlFor={props.id || props.name} className={s.text_label}>
         {props.label}
       </label>
       <input
-        className={c.text_input}
+        className={s.text_input}
         {...field}
         placeholder={props.placeholder}
         type={props.type}
         name={props.name}
       />
       {meta.touched && meta.error ? (
-        <div className={c.error}>{meta.error}</div>
+        <div className={s.error}>{meta.error}</div>
       ) : null}
     </div>
   );
@@ -41,8 +42,8 @@ const MyCheckbox = (props: CheckBoxProps & FieldHookConfig<string>) => {
 
   return (
     <>
-      <label className={c.checkbox}>
-        <input {...field} type={props.type} className={c.checkbox_input} />
+      <label className={s.checkbox}>
+        <input {...field} type={props.type} className={s.checkbox_input} />
         {props.children}
       </label>
       {meta.touched && meta.error ? (
@@ -60,12 +61,12 @@ interface Values {
 
 interface SubmitProps {
   setSubmitting: (isSubmitting: boolean) => void;
-  setStatus: (status?: string) => void;
   resetForm: (nextState?: Partial<FormikState<Values>>) => void;
 }
 
 export default function LoginForm() {
   const { setAuthUserData } = useAuthData();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const initialValues: Values = {
     email: "",
@@ -74,24 +75,15 @@ export default function LoginForm() {
   };
   const onSubmitHandler = async (
     values: Values,
-    { setSubmitting, setStatus, resetForm }: SubmitProps
+    { setSubmitting, resetForm }: SubmitProps
   ) => {
     await API.login(values.email, values.password, values.rememberMe).then(
       (res) => {
         if (res.status === 200) {
-          // ok
           const data = res.data as AuthUserDataI;
-          setAuthUserData({
-            isAuth: true,
-            userData: {
-              _id: data._id,
-              firstName: data.firstName,
-              lastName: data.lastName,
-              email: data.email,
-            },
-          });
+          setAuthUserData(data);
         } else {
-          setStatus((res.data as ResponseErrorI).message);
+          setErrorMessage((res.data as ResponseErrorI).message);
           resetForm();
         }
       }
@@ -100,7 +92,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className={c.form}>
+    <div className={s.form}>
       <h1>Log In</h1>
       <Formik
         initialValues={initialValues}
@@ -112,9 +104,9 @@ export default function LoginForm() {
         })}
         onSubmit={onSubmitHandler}
       >
-        {({ isSubmitting, status }) => (
+        {({ isSubmitting }) => (
           <Form>
-            {status && <div className={c.form_error}>{status}</div>}
+            {errorMessage && <div className={s.form_error}>{errorMessage}</div>}
             <MyTextInput
               label="Email Address"
               name="email"
@@ -131,10 +123,10 @@ export default function LoginForm() {
               Stay signed
             </MyCheckbox>
 
-            <div className={c.submit_place}>
+            <div className={s.submit_place}>
               <button
                 disabled={isSubmitting}
-                className={c.submit}
+                className={s.submit}
                 type="submit"
               >
                 Submit
