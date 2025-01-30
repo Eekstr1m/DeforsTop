@@ -110,7 +110,7 @@ export const getProductsRouter = () => {
 
   router.post(
     "/",
-    upload.single("thumbnail"),
+    upload.array("thumbnail"),
     verifyToken,
     [
       body("title").trim().notEmpty(),
@@ -119,7 +119,6 @@ export const getProductsRouter = () => {
       body("quantity").trim().notEmpty().isNumeric().isInt({ min: 0 }),
       body("brand").trim().notEmpty(),
       body("category").trim().notEmpty(),
-      body("thumbnailPath").trim(),
       body("specifications").optional().isArray().contains({}),
       body("specifications.*.name").exists().notEmpty().isString(),
       body("specifications.*.desc").exists().notEmpty().isString(),
@@ -139,9 +138,18 @@ export const getProductsRouter = () => {
           quantity,
           brand,
           category,
-          thumbnailPath,
           specifications,
         } = req.body;
+
+        const thumbnailPath: string[] = [];
+        const images = req.files as Express.Multer.File[];
+
+        if (images) {
+          images.forEach((i) => {
+            const path = i.path.replace(`public\\assets\\`, "");
+            thumbnailPath.push(path);
+          });
+        } else thumbnailPath.push("placeholder.png");
 
         const product = await productsRepo.createProduct({
           title,
@@ -163,7 +171,7 @@ export const getProductsRouter = () => {
 
   router.put(
     "/:id",
-    upload.single("thumbnail"),
+    upload.array("thumbnail"),
     verifyToken,
     [
       param("id").trim().notEmpty().isString(),
@@ -194,9 +202,18 @@ export const getProductsRouter = () => {
           quantity,
           brand,
           category,
-          thumbnailPath,
           specifications,
         } = req.body;
+
+        const thumbnailPath: string[] = [];
+        const images = req.files as Express.Multer.File[];
+
+        if (images) {
+          images.forEach((i) => {
+            const path = i.path.replace(`public\\assets\\`, "");
+            thumbnailPath.push(path);
+          });
+        } else thumbnailPath.push("placeholder.png");
 
         const product = await productsRepo.updateProduct({
           id,

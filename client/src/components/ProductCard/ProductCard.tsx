@@ -25,7 +25,7 @@ export default function ProductCard({
       )}
 
       <Link to={`/product/${productData._id}`} className={s.card_img}>
-        <Image thumbnail={productData.thumbnail} />
+        <Image thumbnail={productData.thumbnail[0]} />
       </Link>
       <Link to={`/product/${productData._id}`} className={s.card_title}>
         {productData.title}

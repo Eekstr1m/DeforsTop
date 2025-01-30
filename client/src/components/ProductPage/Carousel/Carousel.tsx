@@ -1,85 +1,85 @@
-import { Options, Splide, SplideSlide } from "@splidejs/react-splide";
+import CustomImage from "../../common/Image/Image";
 import s from "./Carousel.module.scss";
-import Image from "../../common/Image/Image";
-import React from "react";
+import React, { useRef, useState } from "react";
 
-export default function Carousel({
-  hideThumb,
-  thumbnail,
-}: {
-  hideThumb: boolean;
-  thumbnail: string;
-}) {
-  const mainRef = React.createRef<Splide>();
-  const thumbsRef = React.createRef<Splide>();
+// Import Swiper React components
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper as SwiperType } from "swiper";
 
-  React.useEffect(() => {
-    if (thumbsRef.current?.splide !== undefined) {
-      mainRef.current?.sync(thumbsRef.current?.splide);
-    }
-  }, [mainRef, thumbsRef]);
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css/free-mode";
+import "swiper/css/thumbs";
 
-  //   const renderSlides = () => {
-  //     return slides.map((slide) => (
-  //       <SplideSlide key={slide.src}>
-  //         <img src={slide.src} alt={slide.alt} />
-  //       </SplideSlide>
-  //     ));
-  //   };
+// import required modules
+import { Navigation, Thumbs } from "swiper/modules";
 
-  const mainOptions: Options = {
-    type: "loop",
-    perPage: 1,
-    perMove: 1,
-    pagination: false,
-    gap: "20px",
-    breakpoints: {
-      1200: {
-        height: "100%",
-      },
-      767: {
-        pagination: true,
-      },
-    },
-  };
-
-  const thumbOptions: Options = {
-    type: "slide",
-    rewind: true,
-    gap: "20px",
-    pagination: false,
-    fixedWidth: 100,
-    cover: true,
-    focus: "center",
-    isNavigation: true,
-  };
+export default function ImageCarousel({ thumbnail }: { thumbnail: string[] }) {
+  const swiperRef = useRef<SwiperType>();
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType>();
 
   return (
-    <div className={s.image}>
-      {/* Carousel */}
-      <Splide
-        options={mainOptions}
-        ref={mainRef}
-        aria-labelledby="thumbnail-slider-example"
-      >
-        {/* {renderSlides()} */}
-        <SplideSlide className={s.splide__slide}>
-          <Image thumbnail={thumbnail} />
-        </SplideSlide>
-      </Splide>
-      {/*  */}
-      <Splide
-        className={hideThumb ? s.thumbSplide : undefined}
-        options={thumbOptions}
-        ref={thumbsRef}
-        aria-label="My Favorite Images"
-      >
-        {/* {renderSlides()} */}
-        <SplideSlide>
-          <Image thumbnail={thumbnail} />
-        </SplideSlide>
-      </Splide>
-      {/*  */}
+    <div style={{ position: "relative" }}>
+      {thumbnail.length > 1 ? (
+        <>
+          <Swiper
+            effect={"cards"}
+            onBeforeInit={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+            slidesPerView={"auto"}
+            centeredSlides={true}
+            spaceBetween={30}
+            navigation={{
+              nextEl: s.next,
+              prevEl: s.prev,
+            }}
+            thumbs={{ swiper: thumbsSwiper }}
+            modules={[Navigation, Thumbs]}
+            grabCursor={true}
+            loop={true}
+          >
+            {thumbnail.map((slide) => (
+              <SwiperSlide key={slide}>
+                <CustomImage thumbnail={slide} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          <Swiper
+            onSwiper={setThumbsSwiper}
+            loop={true}
+            spaceBetween={10}
+            slidesPerView={3}
+            watchSlidesProgress={true}
+            modules={[Navigation, Thumbs]}
+            className={s.mySwiper}
+          >
+            {thumbnail.map((slide) => (
+              <SwiperSlide key={slide}>
+                <CustomImage thumbnail={slide} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          <div
+            className={s.prev}
+            onClick={() => swiperRef.current?.slidePrev()}
+          >
+            <i className="fa-solid fa-chevron-left fa-2xl"></i>
+          </div>
+          <div
+            className={s.next}
+            onClick={() => swiperRef.current?.slideNext()}
+          >
+            <i className="fa-solid fa-chevron-right fa-2xl"></i>
+          </div>
+        </>
+      ) : (
+        <CustomImage thumbnail={thumbnail[0]} />
+      )}
     </div>
   );
 }

@@ -6,7 +6,7 @@ export interface ProductI {
   quantity: number;
   brand: string;
   category: string;
-  thumbnail: string;
+  thumbnail: Array<string>;
   specifications: Array<{ name: string; desc: string }>;
   createdAt: string;
   updatedAt: string;

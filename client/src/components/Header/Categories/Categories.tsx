@@ -9,7 +9,7 @@ import { apiGetFetcher } from "../../../API/api";
 import { Navigate } from "react-router-dom";
 import Preloader from "../../common/Preloader/Preloader";
 
-type ResponseCategories = {
+export type ResponseCategories = {
   status: number;
   data: string[];
 };

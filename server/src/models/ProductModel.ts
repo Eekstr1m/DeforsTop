@@ -29,8 +29,8 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
     thumbnail: {
-      type: String,
-      default: "",
+      type: [String],
+      default: [],
     },
     specifications: {
       type: Array,
@@ -65,7 +65,7 @@ export type ProductViewModel = {
   quantity: number;
   brand: string;
   category: string;
-  thumbnail: string;
+  thumbnail: Array<string>;
   specifications: Array<SpecificationsObject>;
   stockAvailability: boolean;
   createdAt: NativeDate;
@@ -88,7 +88,7 @@ export type CreateProductModel = {
   quantity: number;
   brand: string;
   category: string;
-  thumbnailPath: string;
+  thumbnailPath: Array<string>;
   specifications: Array<SpecificationsObject>;
 };
 

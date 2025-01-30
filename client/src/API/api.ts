@@ -28,6 +28,21 @@ export const API = {
     const response = await instance.get(`/products`);
     return response.data;
   },
+  async createProduct(formdata: FormData) {
+    try {
+      const response = await instance.post("/products", formdata);
+      // console.log("response", response);
+      // return response.data;
+      return {
+        status: response.status,
+        data: response.data,
+      };
+    } catch (error) {
+      // console.log("error", error);
+      const err = getTypedError(error);
+      return err;
+    }
+  },
   async getCategories(): Promise<string[]> {
     const response = await instance.get(`/categories`);
 

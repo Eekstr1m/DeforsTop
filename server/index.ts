@@ -6,19 +6,17 @@ import express from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import morgan from "morgan";
-import { products } from "./src/data.js";
+import multer from "multer";
+import fs from "fs";
+import session from "express-session";
 import { authTokenVerification, verifyToken } from "./src/middleware/auth.js";
-import { Product } from "./src/models/ProductModel.js";
 import { getAuthRouter } from "./src/routes/auth.js";
 import { getCartRouter } from "./src/routes/cart.js";
 import { getCategoriesRouter } from "./src/routes/categories.js";
 import { getProductsRouter } from "./src/routes/products.js";
-import session from "express-session";
 import { getLogoRouter } from "./src/routes/logo.js";
 import { getWishlistRouter } from "./src/routes/wishlist.js";
 import { getSearchRouter } from "./src/routes/search.js";
-import multer from "multer";
-import fs from "fs";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -67,8 +65,9 @@ app.use(authTokenVerification);
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      const path = `uploads/${req.body.title}`;
-      // const path = `public/assets/${req.body.title}`;
+      const imageFolderName = req.body.title.split(" ").join("_");
+      // const path = `uploads/${req.body.title}`;
+      const path = `public/assets/${imageFolderName}`;
       fs.mkdirSync(path, { recursive: true });
 
       cb(null, path);
@@ -80,8 +79,19 @@ const upload = multer({
 });
 
 app.post("/test", upload.array("avatar"), (req, res) => {
-  // console.log(req.files["title"]);
-  console.log("tyt", req.files[0].destination);
+  // console.log(req.files);
+
+  const thumbnailPath: string[] = [];
+  const images = req.files as Express.Multer.File[];
+
+  if (images) {
+    images.forEach((i) => {
+      const path = i.path.replace(`public\\assets\\`, "");
+      thumbnailPath.push(path);
+    });
+    // else push path to placeholder image
+  }
+  console.log("🚀 ~ app.post ~ thumbnailPath:", thumbnailPath);
   res.json("Upload");
 });
 

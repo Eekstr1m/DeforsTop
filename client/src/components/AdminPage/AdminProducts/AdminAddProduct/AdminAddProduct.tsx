@@ -1,15 +1,29 @@
-import { FieldHookConfig, Form, Formik, useField } from "formik";
+import {
+  Field,
+  FieldArray,
+  FieldHookConfig,
+  Form,
+  Formik,
+  FormikErrors,
+  FormikState,
+  useField,
+} from "formik";
 import * as Yup from "yup";
 import s from "./AdminAddProduct.module.scss";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import useSWR from "swr";
 import { CustomBtn } from "../../../common/Button/CustomButton";
+import { ResponseCategories } from "../../../Header/Categories/Categories";
+import { apiGetFetcher } from "../../../../API/api";
+import { Navigate } from "react-router-dom";
+import Preloader from "../../../common/Preloader/Preloader";
 import axios from "axios";
 
 export default function AdminAddProduct() {
   return (
     <div className={s.wrapper}>
       <AddProductForm />
-      {/* <UploadAndDisplayImage /> */}
     </div>
   );
 }
@@ -40,149 +54,329 @@ const CustomInput = (props: InputProps & FieldHookConfig<string>) => {
   );
 };
 
+const CustomTextarea = (props: InputProps & FieldHookConfig<string>) => {
+  const [field, meta] = useField(props);
+
+  return (
+    <div className={s.text_input_area}>
+      <label htmlFor={props.id || props.name} className={s.text_label}>
+        {props.label}
+      </label>
+      <textarea
+        className={s.text_input}
+        {...field}
+        placeholder={props.placeholder}
+        name={props.name}
+      />
+      {meta.touched && meta.error ? (
+        <div className={s.error}>{meta.error}</div>
+      ) : null}
+    </div>
+  );
+};
+
 interface Values {
   title: string;
   description: string;
-  price: number;
-  quantity: number;
+  price: string;
+  quantity: string;
   brand: string;
   category: string;
-  photo: string;
+  photo: Array<Blob>;
+  photoURLS: string[];
   specification: Array<SpecificationsObject>;
 }
 type SpecificationsObject = {
   name: string;
   desc: string;
 };
+interface SubmitProps {
+  setSubmitting: (isSubmitting: boolean) => void;
+  resetForm: (nextState?: Partial<FormikState<Values>>) => void;
+}
 
 function AddProductForm() {
-  const [errorMessage, setErrorMessage] = useState("");
+  // Fetching list of categories used for Categories input field
+  const { data: categories, error } = useSWR<ResponseCategories>(
+    `/categories/`,
+    apiGetFetcher
+  );
+
+  if (error) return <Navigate to={"/error"} />;
+  if (!categories) return <Preloader />;
 
   const initialValues: Values = {
     title: "",
     description: "",
-    price: 0,
-    quantity: 0,
+    price: "",
+    quantity: "",
     brand: "",
-    category: "",
-    photo: "",
+    category: "smartphone",
+    photo: [],
+    photoURLS: [],
     specification: [],
+  };
+
+  const validationMessages = {
+    required: "This is required field",
+    min: "Must be greater than or equal to 1",
+  };
+
+  const onSubmitHandler = async (
+    values: Values,
+    { setSubmitting, resetForm }: SubmitProps
+  ) => {
+    setSubmitting(true);
+    // Setting formdata to send to the server
+    const fd = new FormData();
+    fd.append("title", values.title);
+    fd.append("description", values.description);
+    fd.append("price", values.price);
+    fd.append("quantity", values.quantity);
+    fd.append("brand", values.brand);
+    fd.append("category", values.category);
+    fd.append("specification", JSON.stringify(values.specification));
+    for (let i = 0; i < values.photo.length; i++) {
+      fd.append(`thumbnail`, values.photo[i]);
+    }
+    // Creating toast to display fetch status
+    const statusLoading = toast.loading("Product creation is pending");
+
+    // POST fetch to create product
+    axios
+      .post("http://localhost:4000/products", fd, {
+        withCredentials: true,
+      })
+      .then(() => {
+        resetForm();
+        // Display success fetch status
+        toast.update(statusLoading, {
+          render: "Product created successfully",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      })
+      .catch(() => {
+        // Display error fetch status
+        toast.update(statusLoading, {
+          render: "Product creation failed",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+    setSubmitting(false);
   };
 
   return (
     <Formik
       initialValues={initialValues}
-      //   validationSchema={Yup.object({
-      //     email: Yup.string()
-      //       .email("Invalid email address`")
-      //       .required("Required"),
-      //     password: Yup.string().required("Required"),
-      //   })}
-      onSubmit={() => console.log("ok")}
+      validationSchema={Yup.object({
+        title: Yup.string().required(validationMessages.required),
+        description: Yup.string().required(validationMessages.required),
+        price: Yup.number()
+          .min(1, validationMessages.min)
+          .required(validationMessages.required),
+        quantity: Yup.number()
+          .min(0, validationMessages.min)
+          .required(validationMessages.required),
+        brand: Yup.string().required(validationMessages.required),
+        specification: Yup.array().of(
+          Yup.object({
+            name: Yup.string().required(validationMessages.required),
+            desc: Yup.string().required(validationMessages.required),
+          })
+        ),
+        photo: Yup.array().of(
+          Yup.mixed<File>().test(
+            "fileSize",
+            (value) => !value || (value && value.size <= 1024 * 1024)
+          )
+        ),
+      })}
+      onSubmit={onSubmitHandler}
     >
-      {({ isSubmitting }) => (
-        <Form className={s.form}>
-          <h2 className={s.title}>Add Product</h2>
-          {errorMessage && <div className={s.form_error}>{errorMessage}</div>}
-          <CustomInput
-            label="Title"
-            name="title"
-            type="text"
-            placeholder="Iphone X"
-          />
-          <CustomInput
-            label="Description"
-            name="description"
-            type="text"
-            placeholder="An apple mobile device"
-          />
-          {/* Need add images */}
-          <UploadAndDisplayImage />
+      {({ errors, touched, values, isSubmitting, setFieldValue }) => {
+        // Adding type to an specifications list
+        const specError =
+          errors.specification as FormikErrors<SpecificationsObject>[];
 
-          {/* Add choosing items from categories */}
-          <CustomInput
-            label="Category"
-            name="category"
-            type="text"
-            placeholder="Smartphone"
-          />
-          <CustomInput
-            label="Brand"
-            name="brand"
-            type="text"
-            placeholder="Apple"
-          />
-          <CustomInput label="Price" name="price" type="number" />
-          <CustomInput label="Quantity" name="quantity" type="number" />
-          {/* Add specifications array input */}
-          {/* <CustomInput
-            label="Specifications"
-            name="specifications"
-            type="specifications"
-            placeholder=""
-          /> */}
+        // Adding type to an photos list
+        const photoError = errors.photo as FormikErrors<File>[];
 
-          <CustomBtn
-          //  disabled={isSubmitting}
-          >
-            Submit
-          </CustomBtn>
-        </Form>
-      )}
+        return (
+          <Form className={s.form}>
+            {/* Display toast messages */}
+            <ToastContainer />
+            <h2 className={s.title}>Add Product</h2>
+            <CustomInput
+              label="Title"
+              name="title"
+              type="text"
+              placeholder="Iphone X"
+            />
+            <CustomTextarea
+              label="Description"
+              name="description"
+              type="textarea"
+              placeholder="An apple mobile device"
+            />
+            {/* Adding images */}
+            <UploadAndDisplayImage
+              setFieldValue={setFieldValue}
+              photoError={photoError}
+              photo={values.photo}
+              photoURLS={values.photoURLS}
+            />
+
+            {/* Adding category from categories list */}
+            <label htmlFor={"category"} className={s.text_label}>
+              Category
+            </label>
+            <Field className={s.text_input} as="select" name="category">
+              {categories.data.map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
+            </Field>
+
+            <CustomInput
+              label="Brand"
+              name="brand"
+              type="text"
+              placeholder="Apple"
+            />
+            <CustomInput
+              label="Price"
+              name="price"
+              type="number"
+              placeholder="1299"
+            />
+            <CustomInput
+              label="Quantity"
+              name="quantity"
+              type="number"
+              placeholder="12"
+            />
+
+            {/* Input list of specifications */}
+            <label className={s.text_label}>Specifications</label>
+            <FieldArray
+              name="specification"
+              render={(arrayHelpers) => (
+                <div>
+                  {values.specification.length > 0 &&
+                    values.specification.map((paramList, index) => (
+                      <div className={s.spec_field} key={index}>
+                        {Object.keys(paramList).map((param) => (
+                          <div
+                            key={`${index}${param}`}
+                            className={s.spec_inputs_block}
+                          >
+                            <Field
+                              className={s.spec_input}
+                              name={`specification.${index}.${param}`}
+                              placeholder={
+                                param === "name"
+                                  ? "Specification name"
+                                  : "Specification description"
+                              }
+                            />
+                            {errors.specification &&
+                            touched.specification &&
+                            specError[index] ? (
+                              param === "name" ? (
+                                <div
+                                  hidden={!specError[index].name}
+                                  className={s.error}
+                                >
+                                  {specError[index].name}
+                                </div>
+                              ) : (
+                                <div
+                                  hidden={!specError[index].desc}
+                                  className={s.error}
+                                >
+                                  {specError[index].desc}
+                                </div>
+                              )
+                            ) : null}
+                          </div>
+                        ))}
+
+                        {/* <div className={s.error}>{specError[index].name}</div> */}
+
+                        <div
+                          className={s.spec_delete}
+                          onClick={() => arrayHelpers.remove(index)}
+                        >
+                          <i className="fa-solid fa-trash"></i>
+                        </div>
+                      </div>
+                    ))}
+                  <div
+                    className={s.spec_add_container}
+                    onClick={() => arrayHelpers.push({ name: "", desc: "" })}
+                  >
+                    <div className={s.spec_add}>
+                      <i className="fa-solid fa-plus"></i>
+                      <span>Add specification</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            />
+
+            <CustomBtn disabled={isSubmitting}>Submit</CustomBtn>
+          </Form>
+        );
+      }}
     </Formik>
   );
 }
 
-const UploadAndDisplayImage = () => {
-  const [images, setImages] = useState<Array<Blob>>([]);
-  const [imageURLS, setImageURLs] = useState<Array<string>>([]);
-
+const UploadAndDisplayImage = ({
+  setFieldValue,
+  photoError,
+  photo,
+  photoURLS,
+}: {
+  setFieldValue: (
+    field: string,
+    value: Blob[] | string[],
+    shouldValidate?: boolean | undefined
+  ) => Promise<void | FormikErrors<Values>>;
+  photoError: FormikErrors<File>[] | undefined;
+  photo: Array<Blob>;
+  photoURLS: string[];
+}) => {
   useEffect(() => {
-    if (images.length < 1) return;
+    if (photo.length < 1) return;
     const newImageUrls: Array<string> = [];
 
-    images.forEach((image: Blob) =>
+    photo.forEach((image: Blob) =>
       newImageUrls.push(URL.createObjectURL(image))
     );
 
-    setImageURLs(newImageUrls);
-  }, [images]);
+    setFieldValue("photoURLS", newImageUrls);
+  }, [photo, setFieldValue]);
 
   function onImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
-      setImages([...e.target.files]);
+      setFieldValue("photo", [...e.target.files]);
     }
   }
-
-  const onClickHandler = async () => {
-    if (!images) {
-      return;
-    }
-
-    const fd = new FormData();
-    fd.append("title", "example");
-    for (let i = 0; i < images.length; i++) {
-      fd.append(`avatar`, images[i]);
-    }
-
-    axios
-      .post("http://localhost:4000/test", fd, {
-        // onUploadProgress: (progressEvent) => {
-        //   console.log(progressEvent.progress * 100);
-        // },
-      })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-  };
 
   return (
     <div className={s.image_wrapper}>
       <label className={s.text_label} htmlFor="image">
         Image
       </label>
-      {imageURLS.length > 0 && (
+      {photoURLS.length > 0 && (
         <div className={s.image_preview}>
-          {imageURLS.map((imageSrc) => (
+          {photoURLS.map((imageSrc) => (
             <img
               className={s.image_item}
               key={imageSrc}
@@ -206,6 +400,13 @@ const UploadAndDisplayImage = () => {
         <i className="fa-solid fa-upload"></i>
         Upload
       </label>
+
+      {photoError &&
+        photoError.map((value, index) => (
+          <div key={`${value} ${index}`} className={s.error}>{`Image number ${
+            index + 1
+          } has too large size`}</div>
+        ))}
     </div>
   );
 };
