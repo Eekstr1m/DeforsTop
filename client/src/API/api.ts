@@ -17,7 +17,7 @@ export const BaseAssetsPath = "http://localhost:4000/assets/";
 // move to env
 // export const BaseURL = "https://fp3snhng-4000.euw.devtunnels.ms";
 
-const instance = axios.create({
+export const instance = axios.create({
   // baseURL: "http://localhost:4000",
   baseURL: BaseURL,
   withCredentials: true,

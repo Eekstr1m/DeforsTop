@@ -15,10 +15,9 @@ import { toast, ToastContainer } from "react-toastify";
 import useSWR from "swr";
 import { CustomBtn } from "../../../common/Button/CustomButton";
 import { ResponseCategories } from "../../../Header/Categories/Categories";
-import { apiGetFetcher } from "../../../../API/api";
+import { apiGetFetcher, instance } from "../../../../API/api";
 import { Navigate } from "react-router-dom";
 import Preloader from "../../../common/Preloader/Preloader";
-import axios from "axios";
 
 export default function AdminAddProduct() {
   return (
@@ -143,10 +142,8 @@ function AddProductForm() {
     const statusLoading = toast.loading("Product creation is pending");
 
     // POST fetch to create product
-    axios
-      .post("http://localhost:4000/products", fd, {
-        withCredentials: true,
-      })
+    instance
+      .post("http://localhost:4000/products", fd)
       .then(() => {
         resetForm();
         // Display success fetch status

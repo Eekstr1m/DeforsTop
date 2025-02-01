@@ -13,6 +13,7 @@ import AdminDashboard from "../components/AdminPage/AdminDashboard/AdminDashboar
 import AdminProducts from "../components/AdminPage/AdminProducts/AdminProducts";
 import AdminAddProduct from "../components/AdminPage/AdminProducts/AdminAddProduct/AdminAddProduct";
 import AdminProductsList from "../components/AdminPage/AdminProducts/AdminProductsList/AdminProductsList";
+import AdminProductsCategories from "../components/AdminPage/AdminProducts/AdminProductsCategories/AdminProductsCategories";
 
 export const router = createBrowserRouter([
   {
@@ -77,12 +78,16 @@ export const router = createBrowserRouter([
             element: <Navigate replace to="productslist" />,
           },
           {
+            path: "productslist",
+            element: <AdminProductsList />,
+          },
+          {
             path: "addproduct",
             element: <AdminAddProduct />,
           },
           {
-            path: "productslist",
-            element: <AdminProductsList />,
+            path: "categories",
+            element: <AdminProductsCategories />,
           },
         ],
       },
